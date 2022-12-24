@@ -22,6 +22,7 @@ public class dice
     int dice;
     dice()
     {
+        dice = 5;
     }
 
 
@@ -118,7 +119,28 @@ public class dice
 
 
 
+    void sortArray(int array[], int size)
+    {
+        boolean swap;
+        int temp;
 
+        do
+        {
+            swap = false;
+            for(int count = 0; count < (size - 1); count++)
+            {
+                if(array[count] < array[count + 1])
+                {
+                    {
+                        temp = array[count];
+                        array[count] = array[count + 1];
+                        array[count + 1] = temp;
+                        swap = true;
+                    }
+                }
+            }
+        }while(swap);
+    }
 
 
 

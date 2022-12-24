@@ -31,7 +31,7 @@ public class scorecard
 
     public static boolean checkGameOver ()
     {
-        for (ArrayList i : scorecard)
+        for (ArrayList<String> i : scorecard)
         {
             if (i.isEmpty() == false)
                 return false;
