@@ -16,18 +16,14 @@ import java.net.*;
 import java.awt.event.ActionListener;
 
 
-class finalYahtzee extends JFrame
+class client extends JFrame
 {
     JButton rollDice, dice1Button, dice2Button,dice3Button,dice4Button,dice5Button, showScore, hideScore, menuItem1;
     JLabel topLabel, midLabel, label3, label4, label5, label6, label7, label8; 
     JPanel topPanel, midPanel, lowPanel, endPanel;
 
-    JComboBox<String> drpDwnDice;
-    String[] playerOpts = {"1", "2", "3", "4", "5", "6", "7", "8"};
 
     ArrayList<String> rerolledDice = new ArrayList<>();
-    ArrayList<String> currentScorecard;
-    ArrayList<String> winners;
     
 
 
@@ -35,12 +31,16 @@ class finalYahtzee extends JFrame
     boolean onlyOne = false;
     int dice = 5;
     int sides = 6;
-    int player = 1;
     int[] hand = new int[dice];  
-    int curenetPlayer = 1;
     boolean gameOver = false;
     private int width;
     private int height;
+
+
+    // indiviaul scores and scorecard player specific
+    protected int score = 0;
+    ArrayList<String> scard = new ArrayList<String>();
+
 
 
     // server vars
@@ -61,12 +61,18 @@ class finalYahtzee extends JFrame
 
 
 
-    public finalYahtzee(int w, int h){
+    public client(int w, int h){
         this.width = w;
         this.height = h;
         this.turnsMade = 0;
 
-        // creating a drop down menu for dice
+
+
+
+        // since each player is created as a new version of this 
+        // this class can have its own score and scorecard
+        scard = scorecard.changeInitialArr(scard);
+
 
 
         // creating a panel
@@ -87,13 +93,9 @@ class finalYahtzee extends JFrame
 
         // label welcome 
         topLabel = new JLabel();
-        // // middle label blank intially 
         midLabel = new JLabel();
-        // // label 3 blank intially 
         label3 = new JLabel();
-        // // label 4 blank intially 
         label4 = new JLabel();
-        // // label 5 blank intially 
         label5 = new JLabel();
     }    
 
@@ -152,7 +154,7 @@ class finalYahtzee extends JFrame
         midLabel.setFont(new Font("Times New Roman", Font.PLAIN, 30));
 
         // label 3 blank intially 
-        label3.setText("Total Score: " + scorecard.getSpecScore(playerID - 1));
+        label3.setText("Total Score: " + score);
         label3.setFont(new Font("Times New Roman", Font.PLAIN, 30));
 
         // label 4 blank intially 
@@ -210,7 +212,6 @@ class finalYahtzee extends JFrame
         midPanel.add(showScore);
         // setting up turns label, current player label, and configing game accoridng to how many players were chosen
         topLabel.setBounds(10,50,500,100);
-        scoreClass.setPlayer(player);
 
 
 
@@ -286,7 +287,6 @@ class finalYahtzee extends JFrame
                 }
                 if (e.getSource() == showScore)
                 {
-                    currentScorecard = scorecard.getSpecScorecard(curenetPlayer - 1);
                     showScore.setVisible(false);
                     rollDice.setVisible(false);
                     hideScore.setVisible(true);
@@ -297,12 +297,12 @@ class finalYahtzee extends JFrame
                     dice5Button.setVisible(false);
                     label4.setVisible(false);
                     topLabel.setText("Player " + playerID + " Scorecard");
-                    label3.setText("Total Score: " + scorecard.getSpecScore(playerID - 1));
+                    label3.setText("Total Score: " + score);
 
                     diceClass.sortArray(hand, 5);
 
                     // showing scores 
-                    if (currentScorecard.contains("1"))
+                    if (scard.contains("1"))
                     {
                         menuItem1.setVisible(true);
                         int currentCount = 0;
@@ -322,8 +322,8 @@ class finalYahtzee extends JFrame
                     {
                         turnsMade = 1;
                         label4.setText("Turn: " + turnsMade);
-                        label3.setText("Total Score: " + scorecard.getSpecScore(curenetPlayer - 1));
-                        topLabel.setText("Player: " + curenetPlayer);
+                        label3.setText("Total Score: " + score);
+                        topLabel.setText("Player: " + playerID);
                         rerollDiceFunction();
                     }
                     unhighlight();
@@ -331,7 +331,7 @@ class finalYahtzee extends JFrame
                     showScore.setVisible(true);
                     rollDice.setVisible(true);
                     hideScore.setVisible(false);
-                    topLabel.setText("Player: " + curenetPlayer);
+                    topLabel.setText("Player: " + playerID);
 
                     menuItem1.setVisible(false);
             
@@ -364,9 +364,9 @@ class finalYahtzee extends JFrame
                     if(onlyOne == false)
                     {
                         menuItem1.setVisible(false);
-                        currentScorecard.remove("1");
-                        int finalScore = scorecard.updateScores((curenetPlayer-1), temp);
-                        label3.setText("Total score: " + finalScore);
+                        scard.remove("1");
+                        score += temp;
+                        label3.setText("Total score: " + score);
                     }
                     onlyOne = true;
                 }
@@ -382,20 +382,27 @@ class finalYahtzee extends JFrame
         dice5Button.addActionListener(al);
         menuItem1.addActionListener(al);
     }
-
-    // public void toggleButtons()
-    // {
-    //     dice1Button.setEnabled(buttonsEnabled);
-    //     dice2Button.setEnabled(buttonsEnabled);
-    //     dice3Button.setEnabled(buttonsEnabled);
-    //     dice4Button.setEnabled(buttonsEnabled);
-    //     dice5Button.setEnabled(buttonsEnabled);
-    // }
     
 
     protected void connectToServer(){
         this.csc = new ClientSideConnetion();
     }
+
+
+
+    // public void startReceiving()
+    // {
+    //     Thread t = new Thread(new Runnable())
+    //     {
+    //         public void run()
+    //         {
+    //             while (true)
+    //             {
+    //                 System.out.println("hello");
+    //             }
+    //         }
+    //     }};
+    // }
 
 
     // client connection inner class
@@ -425,10 +432,10 @@ class finalYahtzee extends JFrame
     public static void main(String[] args)
     {
         // finalYahtzee yahtzee = new finalYahtzee();
-        finalYahtzee yahtzee = new finalYahtzee(600,600);
-        yahtzee.connectToServer();
-        yahtzee.setUpGUI();
-        yahtzee.setupButtons();
+        client p = new client(600,600);
+        p.connectToServer();
+        p.setUpGUI();
+        p.setupButtons();
     }
 
 

@@ -19,7 +19,7 @@ public class scorecard
     scorecard()
     {
         setupPlayerScores();
-        setupPlayerCard();
+        // setupPlayerCard();
     }
 
 
@@ -44,17 +44,17 @@ public class scorecard
         this.player = player;
     }
 
-    public static ArrayList<String> getSpecScorecard(int cur)
-    {
-        return scorecard.get(cur);
-    }
+    // public static ArrayList<String> getSpecScorecard(int cur)
+    // {
+    //     return scorecard.get(cur);
+    // }
 
 
 
-    public static int getSpecScore(int cur)
-    {
-        return scores.get(cur);
-    }
+    // public static int getSpecScore(int cur)
+    // {
+    //     return scores.get(cur);
+    // }
 
 
 
@@ -69,37 +69,37 @@ public class scorecard
 
 
     // sets up the player card for the scoreboard
-    public static void setupPlayerCard()
-    {
-        ArrayList<String> a1 = new ArrayList<String>();
-        ArrayList<String> a2 = new ArrayList<String>();
-        ArrayList<String> a3 = new ArrayList<String>();
-        ArrayList<String> a4 = new ArrayList<String>();
-        ArrayList<String> a5 = new ArrayList<String>();
-        ArrayList<String> a6 = new ArrayList<String>();
-        ArrayList<String> a7 = new ArrayList<String>();
-        ArrayList<String> a8 = new ArrayList<String>();
+    // public static void setupPlayerCard()
+    // {
+    //     ArrayList<String> a1 = new ArrayList<String>();
+    //     ArrayList<String> a2 = new ArrayList<String>();
+    //     ArrayList<String> a3 = new ArrayList<String>();
+    //     ArrayList<String> a4 = new ArrayList<String>();
+    //     ArrayList<String> a5 = new ArrayList<String>();
+    //     ArrayList<String> a6 = new ArrayList<String>();
+    //     ArrayList<String> a7 = new ArrayList<String>();
+    //     ArrayList<String> a8 = new ArrayList<String>();
 
 
-        a1 = changeInitialArr(a1);
-        a2 = changeInitialArr(a2);
-        a3 = changeInitialArr(a3);
-        a4 = changeInitialArr(a4);
-        a5 = changeInitialArr(a5);
-        a5 = changeInitialArr(a6);
-        a5 = changeInitialArr(a7);
-        a5 = changeInitialArr(a8);
+    //     a1 = changeInitialArr(a1);
+    //     a2 = changeInitialArr(a2);
+    //     a3 = changeInitialArr(a3);
+    //     a4 = changeInitialArr(a4);
+    //     a5 = changeInitialArr(a5);
+    //     a5 = changeInitialArr(a6);
+    //     a5 = changeInitialArr(a7);
+    //     a5 = changeInitialArr(a8);
 
 
-        scorecard.add(a1);
-        scorecard.add(a2);
-        scorecard.add(a3);
-        scorecard.add(a4);
-        scorecard.add(a5);
-        scorecard.add(a6);
-        scorecard.add(a7);
-        scorecard.add(a8);
-    }
+    //     scorecard.add(a1);
+    //     scorecard.add(a2);
+    //     scorecard.add(a3);
+    //     scorecard.add(a4);
+    //     scorecard.add(a5);
+    //     scorecard.add(a6);
+    //     scorecard.add(a7);
+    //     scorecard.add(a8);
+    // }
 
 
 

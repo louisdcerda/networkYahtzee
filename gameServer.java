@@ -74,14 +74,6 @@ public class gameServer {
             try{
                 this.dataOut.writeInt(playerID);
                 this.dataOut.flush();
-
-                // while (true)
-                // {
-                //     if (playerID == 1)
-                //     {
-                         
-                //     }
-                // }
             } catch (IOException e)
             {
                 System.out.println("IOException form run() SSC");
