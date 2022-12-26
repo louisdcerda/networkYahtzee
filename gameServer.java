@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 
 public class gameServer {
 
@@ -8,6 +9,8 @@ public class gameServer {
     protected ServerSideConnection player1;
     protected ServerSideConnection player2;
     protected int turnsMade;
+    protected int curPlayer = 1;
+    ArrayList<Integer> scores;
 
     
 
@@ -16,6 +19,8 @@ public class gameServer {
         System.out.println("---- Game Server ----");
         this.numPlayer = 0; 
         this.turnsMade = 0;
+        scores = new ArrayList<Integer>();
+        scorecard.setupPlayerScores(scores);
         try{
             ss = new ServerSocket(51734);
         } catch (IOException ex){
@@ -48,6 +53,9 @@ public class gameServer {
         }
     }
 
+
+
+
     private class ServerSideConnection implements Runnable
     {
         protected Socket socket;
@@ -60,8 +68,8 @@ public class gameServer {
             this.socket = s;
             this.playerID = id;
             try{
-                this.dataIn = new DataInputStream(socket.getInputStream());
-                this.dataOut = new DataOutputStream(socket.getOutputStream());
+                dataIn = new DataInputStream(socket.getInputStream());
+                dataOut = new DataOutputStream(socket.getOutputStream());
             } catch(IOException ex)
             {
                 System.out.println("IOException from SSC constructor");
@@ -73,10 +81,26 @@ public class gameServer {
         {
             try{
                 this.dataOut.writeInt(playerID);
+                this.dataOut.writeInt(curPlayer); // write out what players turn it is
                 this.dataOut.flush();
+                
+                while (true){
+                    if (playerID == 1){
+                        player2.sendCurPlayer(curPlayer);
+                    }
+                }
             } catch (IOException e)
             {
                 System.out.println("IOException form run() SSC");
+            }
+        }
+
+        public void sendCurPlayer(int curPlayer){
+            try{
+                dataOut.writeInt(curPlayer);
+                dataOut.flush();
+            } catch(IOException e){
+                System.out.println("IOException from gs sendCurPlayer()");
             }
         }
     }

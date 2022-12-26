@@ -45,9 +45,9 @@ class client extends JFrame
 
     // server vars
     protected int playerID;
-    protected int other;
     protected int turnsMade;
     protected boolean buttonsEnabled;
+    protected int curPlayer;
 
 
     // classes instantiated
@@ -213,19 +213,20 @@ class client extends JFrame
         // setting up turns label, current player label, and configing game accoridng to how many players were chosen
         topLabel.setBounds(10,50,500,100);
 
-
-
         if (playerID == 1)
         {
             label5.setText("Playing");
-            other = 2;
             buttonsEnabled = true;
         } else{
             label5.setText("Waiting");
-            other = 1;
             buttonsEnabled = false;
+            // Thread t = new Thread(new Runnable() {
+            //     public void run(){
+            //         updateTurn();
+            //     }
+            // });
+            // t.start();
         }
-
         this.setVisible(true);
 
     }
@@ -241,7 +242,8 @@ class client extends JFrame
                 // function that rolls dice and updates the text on the button
                 if (e.getSource() == rollDice)
                 {  
-                    if (turnsMade < 4)
+
+                    if (turnsMade < 4 && curPlayer == playerID) 
                     {
                         unhighlight();
                         rerollDiceFunction();
@@ -352,24 +354,38 @@ class client extends JFrame
 
                 if (e.getSource() == menuItem1)
                 {
-                    // calc the score for menu item 1
-                    int currentCount = 0;
-                    for (int diePos = 0; diePos < dice; diePos++)
+                    if (curPlayer == playerID)
                     {
-                        if (hand[diePos] == 1)
-                            currentCount++;
+                        // calc the score for menu item 1
+                        int currentCount = 0;
+                        for (int diePos = 0; diePos < dice; diePos++)
+                        {
+                            if (hand[diePos] == 1)
+                                currentCount++;
+                        }
+                        // score to be added
+                        int temp = 1*currentCount;
+                        if(onlyOne == false)
+                        {
+                            menuItem1.setVisible(false);
+                            scard.remove("1");
+                            score += temp;
+                            label3.setText("Total score: " + score);
+                            switchPlayers(); 
+                            curPlayer = (((curPlayer) % 2) + 1);
+                            
+                        }
+                        onlyOne = true;
+                        csc.sendCurPlayer();
                     }
-                    // score to be added
-                    int temp = 1*currentCount;
-                    if(onlyOne == false)
-                    {
-                        menuItem1.setVisible(false);
-                        scard.remove("1");
-                        score += temp;
-                        label3.setText("Total score: " + score);
-                    }
-                    onlyOne = true;
                 }
+
+                // Thread t = new Thread(new Runnable() {
+                //     public void run(){
+                //         updateTurn();
+                //     }
+                // });
+                // t.start();
             }
         };
         rollDice.addActionListener(al);
@@ -390,19 +406,14 @@ class client extends JFrame
 
 
 
-    // public void startReceiving()
-    // {
-    //     Thread t = new Thread(new Runnable())
-    //     {
-    //         public void run()
-    //         {
-    //             while (true)
-    //             {
-    //                 System.out.println("hello");
-    //             }
-    //         }
-    //     }};
-    // }
+
+    public void updateTurn(){
+        System.out.println("Cur player was: " + curPlayer );
+        curPlayer = csc.receiveCurPlayer();
+    }
+
+    
+
 
 
     // client connection inner class
@@ -419,14 +430,52 @@ class client extends JFrame
                 this.dataIn = new DataInputStream(socket.getInputStream());
                 this.dataOut = new DataOutputStream(socket.getOutputStream());
                 playerID = dataIn.readInt();
+                curPlayer = dataIn.readInt();
                 System.out.println("Connected to server as player # " + playerID + " .");
             }catch (IOException ex){
                 ex.getStackTrace();
                 System.out.println("IOException from csc constructor"); 
             }
         }
+
+
+        public void sendCurPlayer(){
+            System.out.println("Sending next player up");
+            try{
+                dataOut.writeInt(curPlayer);
+                dataOut.flush();
+
+            } catch(IOException e){
+                System.out.println("IOException from sendCurPlayer function");
+            }
+        }
+
+
+        public int receiveCurPlayer(){
+            int n = 0;
+            try{
+                n = dataIn.readInt();
+                System.out.println("Cur player is: " );
+            } catch(Exception e){
+                e.getStackTrace();
+                System.out.println("IOException from recieveCurPlayer()");
+            }
+            return n;
+        }
+
+
+        public void closeConnection(){
+            try{    
+                socket.close();
+                System.out.println("----- CONNECTION CLOSED -----");
+            } catch(IOException e){
+                System.out.println("ERROR FORM CLOSED CONNECTION");
+            }
+        }
     }
 
+
+   
 
 
     public static void main(String[] args)
@@ -437,6 +486,16 @@ class client extends JFrame
         p.setUpGUI();
         p.setupButtons();
     }
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -515,4 +574,37 @@ class client extends JFrame
         dice5Button.setText(dice5Roll);
         hand[4] = Integer.parseInt(dice5Roll);
     }
+
+
+
+    public void switchPlayers()
+    {
+        if (label5.getText() == "Waiting")
+        {
+            label5.setText("Playing");
+        } else{
+            label5.setText("Waiting");
+        }
+    }
 }
+
+
+
+
+
+// 12.23.22
+// send over button clicked and recieve 
+// create new thread to allow for connections to not interfere with GUI function
+// toggle buttons enabled 
+// update score on game server 
+// sort scores arry 
+    // possible with a map with the key 
+
+
+
+// 12.24.22
+// todo:
+// needs to receive cur player form server and update 
+// update score on the actual server
+    // another send function to the server from the client 
+    
